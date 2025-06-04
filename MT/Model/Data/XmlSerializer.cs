@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 using Model.Core;
 using Model.Data;
 
-namespace MT
+namespace Model.Data
 {
     public class XmlScoreSerializer : ScoreSerializer
     {
