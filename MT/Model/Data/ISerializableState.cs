@@ -1,4 +1,4 @@
-﻿using Model.Core;
+using Model.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +11,7 @@ namespace Model.Data
     {
         void SaveState(GameState state);
         GameState LoadState();
+        void ValidateBeforeSerialization(object data);
+        void ValidateState();
     }
 }
