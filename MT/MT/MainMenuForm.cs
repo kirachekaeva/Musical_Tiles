@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace MT
@@ -79,26 +79,36 @@ namespace MT
             {
                 GameSettings.LanesCount = difficultyCombo.SelectedIndex + 2;
             };
-            Controls.Add(difficultyCombo);
 
-            formatComboBox = new ComboBox();
-            formatComboBox.Items.AddRange(new object[] { "JSON", "XML" });
-            formatComboBox.SelectedItem = GameSettings.SelectedSerializer == "xml" ? "XML" : "JSON";
-            formatComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            formatComboBox.Location = new Point(300, 150);
-            formatComboBox.Size = new Size(100, 25);
-            formatComboBox.SelectedIndexChanged += FormatComboBox_SelectedIndexChanged;
-            Controls.Add(formatComboBox);
+            Controls.Add(difficultyCombo);
 
             var formatLabel = new Label
             {
                 Text = "Save format:",
-                Location = new Point(200, 155),
+                Location = new Point(125, 270),  
                 Size = new Size(100, 20),
-                ForeColor = Color.White
+                ForeColor = Color.White,
+                Font = new Font("Arial", 12)     
             };
             Controls.Add(formatLabel);
+
+            formatComboBox = new ComboBox
+            {
+                Items = { "JSON", "XML" },
+                SelectedItem = GameSettings.SelectedSerializer == "xml" ? "XML" : "JSON",
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Location = new Point(225, 265),  
+                Size = new Size(150, 30),      
+                Font = new Font("Arial", 12),   
+                BackColor = Color.FromArgb(50, 50, 60),
+                ForeColor = Color.White
+            };
+            formatComboBox.SelectedIndexChanged += FormatComboBox_SelectedIndexChanged;
+            Controls.Add(formatComboBox);
         }
+
+
+
 
         private void FormatComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
