@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 using Model.Core;
+using Model.Data;
 
 namespace MT
 {
@@ -29,7 +30,7 @@ namespace MT
                 var serializer = new XmlSerializer(typeof(List<int>));
                 using (var reader = new StreamReader(ScoresFileName))
                 {
-                    return (List<int>)serializer.Deserialize(reader) ?? new List<int>();
+                    return Deserialize<List<int>>(ScoresFileName) ?? new List<int>();
                 }
             }
             return new List<int>();
@@ -37,6 +38,8 @@ namespace MT
 
         public override void SaveState(GameState state)
         {
+            ((ISerializableState)this).ValidateState();
+
             var serializer = new XmlSerializer(typeof(GameState));
             using (var writer = new StreamWriter(StateFileName))
             {
@@ -46,20 +49,27 @@ namespace MT
 
         public override GameState LoadState()
         {
-            if (File.Exists(StateFileName))
+            return Deserialize<GameState>(StateFileName) ?? new GameState();
+        }
+
+
+        private T Deserialize<T>(string fileName) where T : new()
+        {
+            if (!File.Exists(fileName)) return new T();
+
+            var serializer = new XmlSerializer(typeof(T));
+            using (var reader = new StreamReader(fileName))
             {
-                var serializer = new XmlSerializer(typeof(GameState));
-                using (var reader = new StreamReader(StateFileName))
-                {
-                    return (GameState)serializer.Deserialize(reader) ?? new GameState();
-                }
+                object result = serializer.Deserialize(reader);
+                return result is T validResult ? validResult : new T();
             }
-            return new GameState();
         }
 
         public void Serialize(object data, string fileName)
         {
             if (data == null) return;
+
+            ((ScoreSerializer)this).ValidateBeforeSerialization(data);
 
             var type = data.GetType();
             var serializer = new XmlSerializer(type);
@@ -67,19 +77,6 @@ namespace MT
             {
                 serializer.Serialize(writer, data);
             }
-        }
-
-        public object Deserialize(string fileName, Type type)
-        {
-            if (File.Exists(fileName))
-            {
-                var serializer = new XmlSerializer(type);
-                using (var reader = new StreamReader(fileName))
-                {
-                    return serializer.Deserialize(reader);
-                }
-            }
-            return Activator.CreateInstance(type);
         }
     }
 }
