@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace MT
+namespace Model.Data
 {
     public class JsonScoreSerializer : ScoreSerializer
     {
