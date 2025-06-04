@@ -1,4 +1,4 @@
-﻿using Model;
+using Model;
 using Model.Core;
 using System;
 using System.Collections.Generic;
@@ -144,7 +144,6 @@ namespace MT
 
         public void ProcessTile(Button tile)
         {
-            // Базовая версия - обычная обработка плитки
             if (tileObjects.TryGetValue(tile, out TileBase tileObj))
             {
                 if (tileObj.IsTrap)
@@ -161,7 +160,6 @@ namespace MT
 
         public void ProcessTile(Button tile, bool ignoreTrap)
         {
-            // Перегруженная версия - с дополнительным параметром ignoreTrap
             if (tileObjects.TryGetValue(tile, out TileBase tileObj))
             {
                 if (tileObj.IsTrap && !ignoreTrap)
@@ -176,7 +174,6 @@ namespace MT
             }
         }
 
-        // Модифицируем методы обработки событий для использования перегруженных методов
         private void Tile_Click(object sender, EventArgs e)
         {
             var tile = sender as Button;
@@ -189,12 +186,12 @@ namespace MT
             {
                 if (clickCounts[tile] >= 2)
                 {
-                    ProcessTile(tile); // Используем базовую версию
+                    ProcessTile(tile); 
                 }
             }
             else if (!tileObj.RequiresHold)
             {
-                ProcessTile(tile, true); // Используем перегруженную версию с игнорированием ловушек
+                ProcessTile(tile, true); 
             }
         }
 
@@ -206,7 +203,7 @@ namespace MT
             var tileObj = tileObjects[tile];
             if (tileObj.RequiresDoubleClick)
             {
-                ProcessTile(tile); // Используем базовую версию
+                ProcessTile(tile); 
             }
         }
 
@@ -221,7 +218,7 @@ namespace MT
                 var holdTime = DateTime.Now - holdStartTimes[tile];
                 if (holdTime.TotalMilliseconds >= 500)
                 {
-                    ProcessTile(tile, false); // Используем перегруженную версию
+                    ProcessTile(tile, false); 
                 }
                 else
                 {
