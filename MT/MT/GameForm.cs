@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -17,27 +17,26 @@ namespace MT
         public GameForm()
         {
             InitializeComponents();
-            InitializeVisualControls();
         }
 
         private void InitializeComponents()
         {
-            Text = "Musical Tiles";
-            ClientSize = new Size(800, 600);
-            FormBorderStyle = FormBorderStyle.FixedSingle;
-            MaximizeBox = false;
-            BackColor = Color.FromArgb(20, 20, 30);
+            ((Form)this).Text = "Musical Tiles";
+            ((Form)this).ClientSize = new Size(800, 600);
+            ((Form)this).FormBorderStyle = FormBorderStyle.FixedSingle;
+            ((Form)this).MaximizeBox = false;
+            ((Form)this).BackColor = Color.FromArgb(20, 20, 30);
 
             ScoreLabel = new Label
             {
                 Text = $"SCORE: {GameSettings.Score}",
-                Location = new Point(20, 20),
+                Location = new Point(20, 30),
                 AutoSize = true,
                 Font = new Font("Arial", 14, FontStyle.Bold),
                 ForeColor = Color.White,
                 BackColor = Color.Transparent
             };
-            Controls.Add(ScoreLabel);
+            ((Form)this).Controls.Add(ScoreLabel);
 
             TimeLabel = new Label
             {
@@ -48,16 +47,16 @@ namespace MT
                 ForeColor = Color.White,
                 BackColor = Color.Transparent
             };
-            Controls.Add(TimeLabel);
+            ((Form)this).Controls.Add(TimeLabel);
 
             ClickableArea = new Panel
             {
                 BackColor = Color.FromArgb(50, 50, 70),
                 Height = GameSettings.ClickableAreaHeight,
-                Width = ClientSize.Width,
-                Location = new Point(0, ClientSize.Height - GameSettings.ClickableAreaHeight)
+                Width = ((Form)this).ClientSize.Width,
+                Location = new Point(0, ((Form)this).ClientSize.Height - GameSettings.ClickableAreaHeight)
             };
-            Controls.Add(ClickableArea);
+            ((Form)this).Controls.Add(ClickableArea);
             ClickableArea.BringToFront();
 
             InitializeLaneDividers();
@@ -66,7 +65,7 @@ namespace MT
         private void InitializeLaneDividers()
         {
             LaneDividers = new Panel[GameSettings.LanesCount - 1];
-            int laneWidth = ClientSize.Width / GameSettings.LanesCount;
+            int laneWidth = ((Form)this).ClientSize.Width / GameSettings.LanesCount;
 
             for (int i = 0; i < GameSettings.LanesCount - 1; i++)
             {
@@ -74,73 +73,42 @@ namespace MT
                 {
                     BackColor = Color.FromArgb(80, 80, 100),
                     Width = 1,
-                    Height = ClientSize.Height,
+                    Height = ((Form)this).ClientSize.Height,
                     Location = new Point((i + 1) * laneWidth, 0)
                 };
-                Controls.Add(LaneDividers[i]);
+                ((Form)this).Controls.Add(LaneDividers[i]);
                 LaneDividers[i].SendToBack();
             }
         }
 
-        private void InitializeVisualControls()
-        {
-            ScoreProgressBar = new ProgressBar
-            {
-                Minimum = 0,
-                Maximum = 1000,
-                Value = GameSettings.Score,
-                Location = new Point(20, 50),
-                Width = 200,
-                Height = 20,
-                ForeColor = Color.LightBlue,
-                BackColor = Color.FromArgb(30, 30, 40)
-            };
-        }
-
-
-
-        public void UpdateProgressBar(int score)
-        {
-            if (ScoreProgressBar.InvokeRequired)
-            {
-                ScoreProgressBar.Invoke(new Action(() =>
-                {
-                    ScoreProgressBar.Value = Math.Min(score, ScoreProgressBar.Maximum);
-                }));
-            }
-            else
-            {
-                ScoreProgressBar.Value = Math.Min(score, ScoreProgressBar.Maximum);
-            }
-        }
 
         public void UpdateScoreDisplay(int score)
         {
             if (ScoreLabel.InvokeRequired)
             {
-                ScoreLabel.Invoke(new Action(() =>
+                ((Form)this).Invoke(new Action(() =>
                 {
                     ScoreLabel.Text = $"SCORE: {score}";
                     TimeLabel.Text = $"TIME: {GameSettings.TimeLeft}";
-                    UpdateProgressBar(score);
                 }));
             }
             else
             {
                 ScoreLabel.Text = $"SCORE: {score}";
                 TimeLabel.Text = $"TIME: {GameSettings.TimeLeft}";
-                UpdateProgressBar(score);
             }
         }
+
+ 
 
         public void ShowGameOver(bool isWin)
         {
             var message = isWin ? "YOU WIN!" : "GAME OVER!";
             var color = isWin ? Color.Green : Color.Red;
 
-            if (InvokeRequired)
+            if (((Form)this).InvokeRequired)
             {
-                Invoke(new Action(() => ShowGameOverInternal(message, color)));
+                ((Form)this).Invoke(new Action(() => ShowGameOverInternal(message, color)));
             }
             else
             {
@@ -158,11 +126,21 @@ namespace MT
                 BackColor = Color.Transparent,
                 AutoSize = true,
                 Location = new Point(
-                    ClientSize.Width / 2 - 100,
-                    ClientSize.Height / 2 - 50)
+                    ((Form)this).ClientSize.Width / 2 - 100,
+                    ((Form)this).ClientSize.Height / 2 - 50)
             };
-            Controls.Add(gameOverLabel);
+            ((Form)this).Controls.Add(gameOverLabel);
             gameOverLabel.BringToFront();
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            e.Graphics.DrawString("Musical Tiles",
+                new Font("Arial", 12),
+                Brushes.White,
+                new Point(10, 10));
         }
     }
 }
