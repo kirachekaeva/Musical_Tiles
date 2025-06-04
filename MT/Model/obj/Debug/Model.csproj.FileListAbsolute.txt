@@ -1,9 +1,0 @@
-C:\Users\Наташа\source\repos\MT\Model\bin\Debug\Model.dll
-C:\Users\Наташа\source\repos\MT\Model\bin\Debug\Model.pdb
-C:\Users\Наташа\source\repos\MT\Model\obj\Debug\Model.csproj.AssemblyReference.cache
-C:\Users\Наташа\source\repos\MT\Model\obj\Debug\Model.csproj.CoreCompileInputs.cache
-C:\Users\Наташа\source\repos\MT\Model\obj\Debug\Model.dll
-C:\Users\Наташа\source\repos\MT\Model\obj\Debug\Model.pdb
-C:\Users\Наташа\source\repos\MT\Model\bin\Debug\Newtonsoft.Json.dll
-C:\Users\Наташа\source\repos\MT\Model\bin\Debug\Newtonsoft.Json.xml
-C:\Users\Наташа\source\repos\MT\Model\obj\Debug\Model.csproj.Up2Date
