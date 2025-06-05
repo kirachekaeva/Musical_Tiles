@@ -116,6 +116,18 @@ namespace MT
             }
         }
 
+        public void ShowGameOver(string customMessage, Color messageColor)
+        {
+            if (((Form)this).InvokeRequired)
+            {
+                ((Form)this).Invoke(new Action(() => ShowGameOverInternal(customMessage, messageColor)));
+            }
+            else
+            {
+                ShowGameOverInternal(customMessage, messageColor);
+            }
+        }
+
         private void ShowGameOverInternal(string message, Color color)
         {
             var gameOverLabel = new Label
@@ -133,6 +145,36 @@ namespace MT
             gameOverLabel.BringToFront();
         }
 
+        public void ShowRestartButton(Action restartAction)
+        {
+            var restartButton = new Button
+            {
+                Text = "PLAY AGAIN",
+                Font = new Font("Arial", 14),
+                Size = new Size(200, 50),
+                Location = new Point(
+                    ClientSize.Width / 2 - 100,
+                    ClientSize.Height / 2 + 100),
+                BackColor = Color.FromArgb(70, 130, 180),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            restartButton.FlatAppearance.BorderSize = 0;
+            restartButton.Click += (s, e) => restartAction();
+
+            Controls.Add(restartButton);
+            restartButton.BringToFront();
+        }
+
+        public void ClearGameOverUI()
+        {
+            foreach (Control control in Controls.OfType<Label>().Concat<Control>(
+                     Controls.OfType<Button>().Where(b => b.Text == "PLAY AGAIN")).ToList())
+            {
+                Controls.Remove(control);
+                control.Dispose();
+            }
+        }
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
