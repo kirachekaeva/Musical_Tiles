@@ -99,37 +99,24 @@ namespace MT
             }
         }
 
- 
+
 
         public void ShowGameOver(bool isWin)
         {
-            var message = isWin ? "YOU WIN!" : "GAME OVER!";
-            var color = isWin ? Color.Green : Color.Red;
-
-            if (((Form)this).InvokeRequired)
-            {
-                ((Form)this).Invoke(new Action(() => ShowGameOverInternal(message, color)));
-            }
-            else
-            {
-                ShowGameOverInternal(message, color);
-            }
+            var message = isWin ? "TIME'S UP!" : "GAME OVER!";
+            var color = isWin ? Color.Orange : Color.Red;
+            ShowGameOverInternal(message, color, GameSettings.Score);
         }
 
         public void ShowGameOver(string customMessage, Color messageColor)
         {
-            if (((Form)this).InvokeRequired)
-            {
-                ((Form)this).Invoke(new Action(() => ShowGameOverInternal(customMessage, messageColor)));
-            }
-            else
-            {
-                ShowGameOverInternal(customMessage, messageColor);
-            }
+            ShowGameOverInternal(customMessage, messageColor, GameSettings.Score);
         }
 
-        private void ShowGameOverInternal(string message, Color color)
+        private void ShowGameOverInternal(string message, Color color, int score)
         {
+            ClearGameOverUI();
+
             var gameOverLabel = new Label
             {
                 Text = message,
@@ -138,11 +125,25 @@ namespace MT
                 BackColor = Color.Transparent,
                 AutoSize = true,
                 Location = new Point(
-                    ((Form)this).ClientSize.Width / 2 - 100,
-                    ((Form)this).ClientSize.Height / 2 - 50)
+                    ClientSize.Width / 2 - 150,
+                    ClientSize.Height / 2 - 50)
             };
-            ((Form)this).Controls.Add(gameOverLabel);
+            Controls.Add(gameOverLabel);
             gameOverLabel.BringToFront();
+
+            var scoreLabel = new Label
+            {
+                Text = $"YOUR SCORE: {score}",
+                Font = new Font("Arial", 24, FontStyle.Bold),
+                ForeColor = Color.White,
+                BackColor = Color.Transparent,
+                AutoSize = true,
+                Location = new Point(
+                    ClientSize.Width / 2 - 120,
+                    ClientSize.Height / 2 + 20)
+            };
+            Controls.Add(scoreLabel);
+            scoreLabel.BringToFront();
         }
 
         public void ShowRestartButton(Action restartAction)
@@ -168,21 +169,19 @@ namespace MT
 
         public void ClearGameOverUI()
         {
-            foreach (Control control in Controls.OfType<Label>().Concat<Control>(
-                     Controls.OfType<Button>().Where(b => b.Text == "PLAY AGAIN")).ToList())
+            var controlsToRemove = Controls.OfType<Label>()
+                .Where(l => l.Text == "TIME'S UP!" ||
+                           l.Text == "GAME OVER!" ||
+                           l.Text.StartsWith("YOUR SCORE:") ||
+                           l.Text == "YOU WIN!")
+                .Concat<Control>(Controls.OfType<Button>().Where(b => b.Text == "PLAY AGAIN"))
+                .ToList();
+
+            foreach (var control in controlsToRemove)
             {
                 Controls.Remove(control);
                 control.Dispose();
             }
-        }
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-
-            e.Graphics.DrawString("Musical Tiles",
-                new Font("Arial", 12),
-                Brushes.White,
-                new Point(10, 10));
         }
     }
 }
