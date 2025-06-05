@@ -142,7 +142,7 @@ namespace MT
             }
             else if (!tileObj.RequiresHold)
             {
-                ProcessTile(tile, false);
+                ProcessTile(tile, true);
             }
         }
 
@@ -267,8 +267,14 @@ namespace MT
                     : new JsonScoreSerializer();
 
                 List<int> scores = serializer.Deserialize();
-                scores.Add(GameSettings.Score);
-                scores = scores.OrderByDescending(s => s).Take(10).ToList();
+                if (!scores.Contains(GameSettings.Score))
+                {
+                    scores.Add(GameSettings.Score);
+                }
+                scores = scores.Distinct()            
+                .OrderByDescending(s => s)    
+                .Take(10)                     
+                .ToList(); ;
                 serializer.Serialize(scores);
             }
             catch (Exception ex)
