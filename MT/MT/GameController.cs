@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace MT
 {
-    public class GameController
+    public partial class GameController
     {
         private GameForm gameForm;
         private System.Windows.Forms.Timer gameTimer;
@@ -50,28 +50,6 @@ namespace MT
             gameTimer.Start();
             tileTimer.Start();
             animationTimer.Start();
-        }
-
-        private void AnimationTimer_Tick(object sender, EventArgs e)
-        {
-            foreach (var tile in tiles.ToList())
-            {
-                tile.Top += GameSettings.TileSpeed / 3;
-
-                if (tile.Bottom >= gameForm.ClickableArea.Top && !tileObjects[tile].WasClicked)
-                {
-                    if (!tileObjects[tile].IsTrap)
-                    {
-                        EndGame(false);
-                        return;
-                    }
-                }
-
-                if (tile.Top > gameForm.ClientSize.Height)
-                {
-                    RemoveTile(tile);
-                }
-            }
         }
 
         private void TileTimer_Tick(object sender, EventArgs e)
@@ -143,37 +121,9 @@ namespace MT
             tileButton.BringToFront();
         }
 
-        public void ProcessTile(Button tile)
-        {
-            if (tileObjects.TryGetValue(tile, out TileBase tileObj))
-            {
-                if (tileObj.IsTrap)
-                {
-                    EndGame(false);
-                    return;
-                }
 
-                tileObj.WasClicked = true;
-                AddScore(tileObj.ScoreValue);
-                RemoveTile(tile);
-            }
-        }
 
-        public void ProcessTile(Button tile, bool ignoreTrap)
-        {
-            if (tileObjects.TryGetValue(tile, out TileBase tileObj))
-            {
-                if (tileObj.IsTrap && !ignoreTrap)
-                {
-                    EndGame(false);
-                    return;
-                }
 
-                tileObj.WasClicked = true;
-                AddScore(tileObj.ScoreValue);
-                RemoveTile(tile);
-            }
-        }
 
         private void Tile_Click(object sender, EventArgs e)
         {
@@ -187,12 +137,12 @@ namespace MT
             {
                 if (clickCounts[tile] >= 2)
                 {
-                    ProcessTile(tile); 
+                    ProcessTile(tile);
                 }
             }
             else if (!tileObj.RequiresHold)
             {
-                ProcessTile(tile, true); 
+                ProcessTile(tile, true);
             }
         }
 
@@ -204,7 +154,7 @@ namespace MT
             var tileObj = tileObjects[tile];
             if (tileObj.RequiresDoubleClick)
             {
-                ProcessTile(tile); 
+                ProcessTile(tile);
             }
         }
 
@@ -219,7 +169,7 @@ namespace MT
                 var holdTime = DateTime.Now - holdStartTimes[tile];
                 if (holdTime.TotalMilliseconds >= 500)
                 {
-                    ProcessTile(tile, false); 
+                    ProcessTile(tile, false);
                 }
                 else
                 {
@@ -246,27 +196,7 @@ namespace MT
         }
 
 
-        private void AddScore(int points)
-        {
-            GameSettings.Score += points;
-            gameForm.ScoreLabel.Text = $"SCORE: {GameSettings.Score}";
-
-            if (GameSettings.Score > 50)
-            {
-                GameSettings.TileSpeed = 7;
-                tileTimer.Interval = 600;
-            }
-            if (GameSettings.Score > 100)
-            {
-                GameSettings.TileSpeed = 9;
-                tileTimer.Interval = 400;
-            }
-            if (GameSettings.Score > 200)
-            {
-                GameSettings.TileSpeed = 11;
-                tileTimer.Interval = 300;
-            }
-        }
+ 
 
         private void RemoveTile(Button tile)
         {
@@ -308,70 +238,7 @@ namespace MT
             SaveScore();
         }
 
-        private void EndGame(bool timeRanOut)
-        {
-            gameTimer.Stop();
-            tileTimer.Stop();
-            animationTimer.Stop();
-
-            foreach (var tile in tiles)
-            {
-                tile.Enabled = false;
-            }
-
-            gameOverLabel = new Label
-            {
-                Text = timeRanOut ? "TIME'S UP!" : "GAME OVER!",
-                Font = new Font("Arial", 36, FontStyle.Bold),
-                ForeColor = Color.White,
-                BackColor = Color.Transparent,
-                AutoSize = true,
-                Location = new Point(
-                    gameForm.ClientSize.Width / 2 - 150,
-                    gameForm.ClientSize.Height / 2 - 50)
-            };
-            gameForm.Controls.Add(gameOverLabel);
-            gameOverLabel.BringToFront();
-
-            var finalScoreLabel = new Label
-            {
-                Text = $"YOUR SCORE: {GameSettings.Score}",
-                Font = new Font("Arial", 24, FontStyle.Bold),
-                ForeColor = Color.White,
-                BackColor = Color.Transparent,
-                AutoSize = true,
-                Location = new Point(
-                    gameForm.ClientSize.Width / 2 - 120,
-                    gameForm.ClientSize.Height / 2 + 20)
-            };
-            gameForm.Controls.Add(finalScoreLabel);
-            finalScoreLabel.BringToFront();
-
-            var restartButton = new Button
-            {
-                Text = "PLAY AGAIN",
-                Font = new Font("Arial", 14),
-                Size = new Size(200, 50),
-                Location = new Point(
-                    gameForm.ClientSize.Width / 2 - 100,
-                    gameForm.ClientSize.Height / 2 + 100),
-                BackColor = Color.FromArgb(70, 130, 180),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
-            };
-            restartButton.FlatAppearance.BorderSize = 0;
-            restartButton.Click += (s, e) =>
-            {
-                gameForm.Controls.Remove(gameOverLabel);
-                gameForm.Controls.Remove(finalScoreLabel);
-                gameForm.Controls.Remove(restartButton);
-                ResetGame();
-            };
-            gameForm.Controls.Add(restartButton);
-            restartButton.BringToFront();
-
-            SaveScore();
-        }
+        
 
         private void ResetGame()
         {
