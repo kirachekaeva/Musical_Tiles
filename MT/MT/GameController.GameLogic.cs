@@ -33,56 +33,20 @@ namespace MT
                 tile.Enabled = false;
             }
 
-            gameOverLabel = new Label
+            if (timeRanOut)
             {
-                Text = timeRanOut ? "TIME'S UP!" : "GAME OVER!",
-                Font = new Font("Arial", 36, FontStyle.Bold),
-                ForeColor = Color.White,
-                BackColor = Color.Transparent,
-                AutoSize = true,
-                Location = new Point(
-                    gameForm.ClientSize.Width / 2 - 150,
-                    gameForm.ClientSize.Height / 2 - 50)
-            };
-            gameForm.Controls.Add(gameOverLabel);
-            gameOverLabel.BringToFront();
+                gameForm.ShowGameOver(true); 
+            }
+            else
+            {
+                gameForm.ShowGameOver("GAME OVER!", Color.Red); 
+            }
 
-            var finalScoreLabel = new Label
+            gameForm.ShowRestartButton(() =>
             {
-                Text = $"YOUR SCORE: {GameSettings.Score}",
-                Font = new Font("Arial", 24, FontStyle.Bold),
-                ForeColor = Color.White,
-                BackColor = Color.Transparent,
-                AutoSize = true,
-                Location = new Point(
-                    gameForm.ClientSize.Width / 2 - 120,
-                    gameForm.ClientSize.Height / 2 + 20)
-            };
-            gameForm.Controls.Add(finalScoreLabel);
-            finalScoreLabel.BringToFront();
-
-            var restartButton = new Button
-            {
-                Text = "PLAY AGAIN",
-                Font = new Font("Arial", 14),
-                Size = new Size(200, 50),
-                Location = new Point(
-                    gameForm.ClientSize.Width / 2 - 100,
-                    gameForm.ClientSize.Height / 2 + 100),
-                BackColor = Color.FromArgb(70, 130, 180),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
-            };
-            restartButton.FlatAppearance.BorderSize = 0;
-            restartButton.Click += (s, e) =>
-            {
-                gameForm.Controls.Remove(gameOverLabel);
-                gameForm.Controls.Remove(finalScoreLabel);
-                gameForm.Controls.Remove(restartButton);
+                gameForm.ClearGameOverUI();
                 ResetGame();
-            };
-            gameForm.Controls.Add(restartButton);
-            restartButton.BringToFront();
+            });
 
             SaveScore();
         }
