@@ -142,7 +142,7 @@ namespace MT
             }
             else if (!tileObj.RequiresHold)
             {
-                ProcessTile(tile, true);
+                ProcessTile(tile, false);
             }
         }
 
